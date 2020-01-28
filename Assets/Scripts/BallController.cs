@@ -6,23 +6,21 @@ using Base;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class BallController : MonoBehaviour
+public class BallController : KinematicObject
 {
     // Start is called before the first frame update
     public float speed = 5;
-    private Rigidbody2D _rigidbody2D;
-    private Vector2 move;
     private Text RightScoreField, LeftScoreField;
     private int RightTeamScore = 0;
     private int LeftTeamScore = 0;
-    void Start()
+    void Awake()
     {
-        _rigidbody2D = GetComponent<Rigidbody2D>();
+        Body = GetComponent<Rigidbody2D>();
         RightScoreField = GameObject.Find("RightSideScore").GetComponent<Text>();
         LeftScoreField = GameObject.Find("LeftSideScore").GetComponent<Text>();
-        move = _rigidbody2D.velocity * speed;
-        move.x = -1 * speed;
-        _rigidbody2D.velocity = move;
+        Direction = Body.velocity * speed;
+        Direction.x = -1 * speed;
+        Body.velocity = Direction;
     }
 
     private void OnCollisionEnter2D(Collision2D other)
@@ -39,13 +37,13 @@ public class BallController : MonoBehaviour
         float y = (transform.position.y - col.transform.position.y) / col.collider.bounds.size.y;
         if (col.gameObject.name == "Paddle Right")
         {
-            move = new Vector2(1, y).normalized;
+            Direction = new Vector2(1, y).normalized;
         } 
         if (col.gameObject.name == "Paddle Left")
         {
-            move = new Vector2(-1, y).normalized;
+            Direction = new Vector2(-1, y).normalized;
         }
-        _rigidbody2D.velocity = move * speed;
+        Body.velocity = Direction * speed;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -56,15 +54,14 @@ public class BallController : MonoBehaviour
         else if (other.gameObject.name == "Left") RightTeamScore++;
 
         gameObject.SetActive(false);
-        //Thread.Sleep(300);
         UpdateScore();
         var spawnPoint = GameObject.Find("SpawnPoint");
 
         transform.position = spawnPoint.transform.position;
         gameObject.SetActive(true);
-        move = Vector2.right;
+        Direction = Vector2.right;
         speed = 5;
-        _rigidbody2D.velocity = move * speed;
+        Body.velocity = Direction * speed;
     }
 
     private void UpdateScore()
@@ -76,5 +73,10 @@ public class BallController : MonoBehaviour
     private void CalculateDirection(Collision2D collision2D)
     {
         
+    }
+
+    protected override void ComputeVelocity()
+    {
+        throw new NotImplementedException();
     }
 }

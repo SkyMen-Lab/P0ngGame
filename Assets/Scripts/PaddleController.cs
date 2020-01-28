@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,6 +18,11 @@ public class PaddleController : MonoBehaviour
     }
 
     // Update is called once per frame
+    private void FixedUpdate()
+    {
+        //HandlePresses();
+    }
+
     void Update()
     {
         HandlePresses();
@@ -27,10 +33,18 @@ public class PaddleController : MonoBehaviour
     {
         if (gameObject.name == "Paddle Left")
         {
-            if (Input.GetKeyDown(KeyCode.UpArrow))
-                move.y = 1 * speed;
-            else if (Input.GetKey(KeyCode.DownArrow))
-                move.y = -1 * speed;
+            if (Input.GetKeyUp(KeyCode.UpArrow))
+            {
+                var y = transform.position.y +  5.6f;
+                var pos = new Vector3(transform.position.x, y);
+                transform.position = Vector3.Lerp(transform.position, pos, 0.5f * Time.deltaTime);
+            }
+            else if (Input.GetKeyUp(KeyCode.DownArrow))
+            {
+                var y = transform.position.y -  5.6f;
+                var pos = new Vector3(transform.position.x, y);
+                transform.position = Vector3.Lerp(transform.position, pos, 0.5f * Time.deltaTime);
+            }
         }
         else
         {
@@ -39,9 +53,10 @@ public class PaddleController : MonoBehaviour
             else if (Input.GetKeyDown(KeyCode.S))
                 move.y = -1 * speed;
         }
-
-        if (Input.GetKeyUp(KeyCode.UpArrow) || Input.GetKeyUp(KeyCode.DownArrow) || Input.GetKeyUp(KeyCode.W) ||
-            Input.GetKeyUp(KeyCode.S))
-            move.y = 0;
+        
+        //
+        // if (Input.GetKeyUp(KeyCode.UpArrow) || Input.GetKeyUp(KeyCode.DownArrow) || Input.GetKeyUp(KeyCode.W) ||
+        //     Input.GetKeyUp(KeyCode.S))
+        //     move.y = 0;
     }
 }

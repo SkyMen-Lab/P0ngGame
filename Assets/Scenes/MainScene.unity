@@ -771,8 +771,8 @@ Canvas:
   m_GameObject: {fileID: 1382538925}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
-  m_Camera: {fileID: 0}
+  m_RenderMode: 1
+  m_Camera: {fileID: 519420031}
   m_PlaneDistance: 100
   m_PixelPerfect: 1
   m_ReceivesEvents: 1
@@ -1115,13 +1115,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1708938891}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.008, y: 0.002, z: 0}
+  m_LocalRotation: {x: 0.0023920676, y: -0, z: -0, w: 0.99999714}
+  m_LocalPosition: {x: -0.008, y: 0.002, z: 6.9395667e-10}
   m_LocalScale: {x: 0.9260674, y: 0.92700005, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 8
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0.27400002, y: 0, z: 0}
 --- !u!1001 &1775280650
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1384,6 +1384,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2597456996902988725, guid: 25e6e5a5d7f414e079d923fbd4fc5b4e,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2.3125
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 25e6e5a5d7f414e079d923fbd4fc5b4e, type: 3}
 --- !u!1001 &2597456996723987738
@@ -1458,6 +1463,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2597456996902988725, guid: 25e6e5a5d7f414e079d923fbd4fc5b4e,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2.371875
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 6741314994143493850, guid: 25e6e5a5d7f414e079d923fbd4fc5b4e, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 25e6e5a5d7f414e079d923fbd4fc5b4e, type: 3}
@@ -1471,6 +1481,10 @@ PrefabInstance:
     - target: {fileID: 21874806, guid: cc2df5c2855c745aab17336d7456c67e, type: 3}
       propertyPath: m_Interpolate
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 21874806, guid: cc2df5c2855c745aab17336d7456c67e, type: 3}
+      propertyPath: m_CollisionDetection
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 606642061727369269, guid: cc2df5c2855c745aab17336d7456c67e,
         type: 3}
