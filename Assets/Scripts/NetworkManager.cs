@@ -1,17 +1,23 @@
 using System;
+using System.Collections;
 using Services;
 using UnityEngine;
+using UnityEngine.UI;
 
-namespace DefaultNamespace
+public class NetworkManager : NetworkBase
 {
-    public class NetworkManager : NetworkBase
+    public Button button;
+    private void Start()
     {
-        private void Start()
-        {
-            ConnectToServerApi("127.0.0.1", 5050);
-            OnMessageReceivedEvent += delegate(string message) {
-                Debug.unityLogger.Log(message);
-            };
-        }
+        OnMessageReceivedEvent += delegate(string message) {
+            Debug.unityLogger.Log(message);
+        };
+        
+        button.onClick.AddListener(TestMSG);
+    }
+
+    private void TestMSG()
+    {
+        SendMessageToServer("Hello");
     }
 }

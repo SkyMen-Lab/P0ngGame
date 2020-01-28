@@ -13,7 +13,7 @@ namespace Base
         private void Update()
         {
             ComputeVelocity();
-            Body.velocity = Direction * Speed;
+            NetworkManager.SendMessageToServer(transform.position.ToString());
         }
 
         private void Start()

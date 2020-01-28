@@ -77,6 +77,6 @@ public class BallController : KinematicObject
 
     protected override void ComputeVelocity()
     {
-        throw new NotImplementedException();
+        
     }
 }

@@ -2,27 +2,28 @@ using System;
 using System.Collections;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using UnityEngine;
 
 namespace Services
 {
     public class NetworkBase : MonoBehaviour
     {
-        private TcpClient _tcpClient;
-        private NetworkStream _networkStream;
-        private IEnumerator _listenForUpdatesCoroutine;
+        private static TcpClient _tcpClient;
+        private static NetworkStream _networkStream = null;
         private static NetworkBase _networkBase;
         protected const int WaitingMessageFrequency = 2;
-
         protected delegate void OnMessageReceived(string message);
-
         protected event OnMessageReceived OnMessageReceivedEvent;
+        
+        
         private void Awake()
         {
             if (_networkBase == null)
             {
                 _networkBase = this;
                 _tcpClient = new TcpClient();
+                ConnectToServerApi("127.0.0.1", 5050);
             }
             else
             {
@@ -33,48 +34,48 @@ namespace Services
 
         private void Update()
         {
-            StartCoroutine(_listenForUpdatesCoroutine);
         }
 
         protected void ConnectToServerApi(string ip, int port)
         {
             try
             {
-                _tcpClient = new TcpClient();
                 _tcpClient.Connect(ip, port);
-                _listenForUpdatesCoroutine = ListenForUpdates();
-
+                var t = new Thread(new ThreadStart(ListenForUpdates));
+                t.IsBackground = true;
+                t.Start();
             }
             catch (SocketException e)
             {
                 Debug.unityLogger.LogException(e);
                 Disconnect();
             }
-
         }
 
-        private IEnumerator ListenForUpdates()
+        private void ListenForUpdates()
         {
-            _networkStream = _tcpClient.GetStream();
-            do
+            while (true)
             {
-                byte[] encodedMessage = new byte[128];
-                _networkStream.Read(encodedMessage, 0, encodedMessage.Length);
-                var messageLength = encodedMessage.Length;
+                _networkStream = _tcpClient.GetStream();
+                int length;
+                do
+                {
+                    byte[] encodedMessage = new byte[128];
+                    length = _networkStream.Read(encodedMessage, 0, encodedMessage.Length);
+                    var messageLength = encodedMessage.Length;
 
-                string message = Encoding.ASCII.GetString(encodedMessage, 0, messageLength);
-                OnMessageReceivedEvent?.Invoke(message);
-                
-                yield return new WaitForSeconds(WaitingMessageFrequency);
-            } while (true);
+                    string message = Encoding.ASCII.GetString(encodedMessage, 0, messageLength);
+                    OnMessageReceivedEvent?.Invoke(message);
+                } while (length != 0);
+            }
         }
 
 
-        protected void SendMessageToServer(string message)
+        public static void SendMessageToServer(string message)
         {
             if (_networkStream == null)
             {
-                return;
+                _networkStream = _tcpClient.GetStream();
             }
             
             byte[] buffer = Encoding.ASCII.GetBytes(message);
@@ -83,7 +84,7 @@ namespace Services
         
         
         
-        private void Disconnect()
+        protected void Disconnect()
         {
             if (_tcpClient.Connected)
             {
