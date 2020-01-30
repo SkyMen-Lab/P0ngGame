@@ -6,18 +6,23 @@ using UnityEngine.UI;
 
 public class NetworkManager : NetworkBase
 {
-    public Button button;
-    private void Start()
+    private UIService _uiService;
+    public static NetworkManager Instance;
+
+    protected override void AwakeSetup()
     {
-        OnMessageReceivedEvent += delegate(string message) {
-            Debug.unityLogger.Log(message);
-        };
-        
-        button.onClick.AddListener(TestMSG);
+        _uiService = GetComponent<UIService>();
     }
 
-    private void TestMSG()
+    public override void SendMessageToServer(string message)
     {
-        SendMessageToServer("Hello");
+        if (!string.IsNullOrEmpty(message))
+            base.SendMessageToServer(message);
+    }
+
+    public bool Connect(string ip, int port)
+    {
+        ConnectToServerApi(ip, port);
+        return IsConnected();
     }
 }

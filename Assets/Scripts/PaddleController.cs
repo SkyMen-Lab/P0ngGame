@@ -20,13 +20,13 @@ public class PaddleController : MonoBehaviour
     // Update is called once per frame
     private void FixedUpdate()
     {
-        //HandlePresses();
+        HandlePresses();
     }
 
     void Update()
     {
         HandlePresses();
-        _rigidbody2D.velocity = move;
+       _rigidbody2D.velocity = move;
     }
 
     void HandlePresses()
@@ -35,13 +35,13 @@ public class PaddleController : MonoBehaviour
         {
             if (Input.GetKeyUp(KeyCode.UpArrow))
             {
-                var y = transform.position.y +  5.6f;
+                var y = transform.position.y + 10;
                 var pos = new Vector3(transform.position.x, y);
                 transform.position = Vector3.Lerp(transform.position, pos, 0.5f * Time.deltaTime);
             }
             else if (Input.GetKeyUp(KeyCode.DownArrow))
             {
-                var y = transform.position.y -  5.6f;
+                var y = transform.position.y -  7.6f;
                 var pos = new Vector3(transform.position.x, y);
                 transform.position = Vector3.Lerp(transform.position, pos, 0.5f * Time.deltaTime);
             }
@@ -53,10 +53,5 @@ public class PaddleController : MonoBehaviour
             else if (Input.GetKeyDown(KeyCode.S))
                 move.y = -1 * speed;
         }
-        
-        //
-        // if (Input.GetKeyUp(KeyCode.UpArrow) || Input.GetKeyUp(KeyCode.DownArrow) || Input.GetKeyUp(KeyCode.W) ||
-        //     Input.GetKeyUp(KeyCode.S))
-        //     move.y = 0;
     }
 }

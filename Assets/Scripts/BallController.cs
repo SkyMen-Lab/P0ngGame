@@ -8,26 +8,53 @@ using UnityEngine.UI;
 
 public class BallController : KinematicObject
 {
-    // Start is called before the first frame update
-    public float speed = 5;
-    private Text RightScoreField, LeftScoreField;
-    private int RightTeamScore = 0;
-    private int LeftTeamScore = 0;
-    void Awake()
+    #region Events
+
+    public delegate void BallScored(GameObject zone);
+    public event BallScored BallScoredEvent;
+
+    #endregion
+
+    #region other Game objects
+
+    public GameObject spawnPoint;
+    private NetworkManager _networkManager;
+    public static BallController Instance;
+
+    #endregion
+
+    #region Constants
+
+    private const float InitialSpeed = 1.5f;
+
+    #endregion
+    public enum StartDirection
     {
-        Body = GetComponent<Rigidbody2D>();
-        RightScoreField = GameObject.Find("RightSideScore").GetComponent<Text>();
-        LeftScoreField = GameObject.Find("LeftSideScore").GetComponent<Text>();
-        Direction = Body.velocity * speed;
-        Direction.x = -1 * speed;
-        Body.velocity = Direction;
+        Left = -1,
+        Right = 1
+    }
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            Body = GetComponent<Rigidbody2D>();
+        }
+        Destroy(this);
+    }
+    
+
+    private void Update()
+    {
+        Body.velocity = Direction * Speed;
     }
 
     private void OnCollisionEnter2D(Collision2D other)
     {
         if ((other.gameObject.name == "Paddle Right") || (other.gameObject.name == "Paddle Left"))
         {
-            speed += (float) 0.2;
+            Speed += 0.1f;
             HandleHit(other);
         }
     }
@@ -43,33 +70,35 @@ public class BallController : KinematicObject
         {
             Direction = new Vector2(-1, y).normalized;
         }
-        Body.velocity = Direction * speed;
+        Body.velocity = Direction * Speed;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (!other.gameObject.CompareTag("GoalLine")) return;
-
-        if (other.gameObject.name == "Right") LeftTeamScore++;
-        else if (other.gameObject.name == "Left") RightTeamScore++;
-
-        gameObject.SetActive(false);
-        UpdateScore();
-        var spawnPoint = GameObject.Find("SpawnPoint");
-
-        transform.position = spawnPoint.transform.position;
-        gameObject.SetActive(true);
-        Direction = Vector2.right;
-        speed = 5;
-        Body.velocity = Direction * speed;
+        //ball enter the goal zone
+        BallScoredEvent?.Invoke(other.gameObject);
+        var direction = other.gameObject.name == "Right" ? StartDirection.Left : StartDirection.Right;
+        ResetBall(direction);
     }
 
-    private void UpdateScore()
+    public void ResetBall(StartDirection startDirection)
     {
-        RightScoreField.text = RightTeamScore.ToString();
-        LeftScoreField.text = LeftTeamScore.ToString();
+        var position = spawnPoint.transform.position;
+        //transform.position = Vector3.Lerp(transform.position, position, Time.deltaTime * 2);
+        transform.position = position;
+        Direction = new Vector2((float) startDirection, 0);
+        Speed = InitialSpeed;
+        Body.velocity = Direction * Speed;
     }
 
+    public void StopTheBall()
+    {
+        transform.position = spawnPoint.transform.position;
+        Speed = 0;
+        Direction = Vector2.zero;
+        Body.velocity = Direction * Speed;
+    }
+    
     private void CalculateDirection(Collision2D collision2D)
     {
         
