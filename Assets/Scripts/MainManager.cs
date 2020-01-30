@@ -26,7 +26,7 @@ public class MainManager : MonoBehaviour
         _ballController = BallController.Instance;
         _ballController.OnBallScoredEvent += ProcessScore;
         
-        
+        //TODO: Connect in background
         _isConnected = _networkManager.Connect("127.0.0.1", 5050);
     }
 
@@ -100,6 +100,8 @@ public class MainManager : MonoBehaviour
 
     private void ProcessScore(GameObject zone)
     {
+        //TODO: send updates to server
+        
         Side side;
         if (zone.name == "Left")
         {

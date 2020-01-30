@@ -35,6 +35,11 @@ namespace Models
             return _teams.Find(expression);
         }
 
+        public List<Team> GetList()
+        {
+            return _teams;
+        }
+
         public bool UpdateTeam(Team team)
         {
             var currentTeam = FindTeamByCode(team.Code);
