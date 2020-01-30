@@ -41,7 +41,10 @@ public class BallController : KinematicObject
             Instance = this;
             Body = GetComponent<Rigidbody2D>();
         }
-        Destroy(this);
+        else
+        {
+            Destroy(this);
+        }
     }
     
 

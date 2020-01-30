@@ -25,6 +25,12 @@ public class MainManager : MonoBehaviour
         //Ball instance can be accessed only on Start 
         _ballController = BallController.Instance;
         _ballController.OnBallScoredEvent += ProcessScore;
+        _networkManager.OnServerConnectedEvent += ConnectToServerHandler;
+        _networkManager.OnServerDisconnected += DisconnectFromServerHandler;
+        _networkManager.OnTeamReceivedEvent += TeamReceived;
+        _networkManager.OnStartedGameEvent += StartMovingBall;
+        _networkManager.OnMovedPaddleEvent += MovePaddle;
+        _networkManager.OnGameFinishedEvent += FinishGame;
         
         //TODO: Connect in background
         _isConnected = _networkManager.Connect("127.0.0.1", 5050);
@@ -32,19 +38,15 @@ public class MainManager : MonoBehaviour
 
     private void OnEnable()
     {
-        _networkManager.OnServerConnectedEvent += ConnectToServerHandler;
-        _networkManager.OnServerDisconnected += DisconnectFromServerHandler;
-        _networkManager.OnTeamReceivedEvent += TeamReceived;
-        _networkManager.OnStartedGameEvent += StartMovingBall;
-        _networkManager.OnMovedPaddleEvent += MovePaddle;
-        _networkManager.OnGameFinishedEvent += FinishGame;
 
     }
+    
+
     
     
     IEnumerator TryConnect()
     {
-        _networkManager.Connect("127.0.0.1", 5050);
+        _networkManager.Connect("127.0.0.1", 3434);
         yield return new WaitForSeconds(4.0f);
     }
 
