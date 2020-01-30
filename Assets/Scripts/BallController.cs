@@ -11,7 +11,7 @@ public class BallController : KinematicObject
     #region Events
 
     public delegate void BallScored(GameObject zone);
-    public event BallScored BallScoredEvent;
+    public event BallScored OnBallScoredEvent;
 
     #endregion
 
@@ -76,7 +76,7 @@ public class BallController : KinematicObject
     private void OnTriggerEnter2D(Collider2D other)
     {
         //ball enter the goal zone
-        BallScoredEvent?.Invoke(other.gameObject);
+        OnBallScoredEvent?.Invoke(other.gameObject);
         var direction = other.gameObject.name == "Right" ? StartDirection.Left : StartDirection.Right;
         ResetBall(direction);
     }

@@ -1,3 +1,7 @@
+using System.Collections.Generic;
+using Models;
+using Newtonsoft.Json;
+
 public static class MessageHandler
 {
     public enum MessageType
@@ -19,7 +23,24 @@ public static class MessageHandler
         if (message == "finish") return MessageType.FinishGame;
         return null;
     }
-    
-    
+
+    public static List<Team> ParseTeams(string message)
+    {
+        if (string.IsNullOrEmpty(message))
+            return null;
+
+        var list = JsonConvert.DeserializeObject<List<Team>>(message);
+        return list;
+    }
+
+    public static KeyValuePair<string, float>? ParseMovement(string message)
+    {
+        if (string.IsNullOrEmpty(message))
+            return null;
+        var arr = message.Split(' ');
+        var mov = float.Parse(arr[0]);
+        var code = arr[1];
         
+        return new KeyValuePair<string, float>(code, mov);
+    }
 }

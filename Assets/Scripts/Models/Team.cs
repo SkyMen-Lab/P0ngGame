@@ -1,3 +1,6 @@
+using System;
+using Newtonsoft.Json;
+
 namespace Models
 {
     public class Team
@@ -6,5 +9,14 @@ namespace Models
         public string Name { get; set; }
         public int Score { get; set; }
         public float PuddleSpeed { get; set; }
+        
+        [JsonIgnore]
+        public Side Side { get; set; }
+    }
+
+    public enum Side
+    {
+        Left,
+        Right
     }
 }

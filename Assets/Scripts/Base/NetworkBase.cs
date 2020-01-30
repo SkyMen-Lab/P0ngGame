@@ -33,7 +33,7 @@ namespace Services
         public delegate void StartGame();
         public event StartGame OnStartedGameEvent;
 
-        public delegate void MovePaddle(KeyValuePair<Team, float> movement);
+        public delegate void MovePaddle(KeyValuePair<string, float> movement);
         public event MovePaddle OnMovedPaddleEvent;
 
         public delegate void FinishGame();
@@ -138,7 +138,18 @@ namespace Services
                             OnGameFinishedEvent?.Invoke();
                             break;
                         
+                        case MessageHandler.MessageType.InitTeams:
+                            var teams = MessageHandler.ParseTeams(message);
+                            if (teams != null)
+                            {
+                                OnTeamReceivedEvent?.Invoke(teams);
+                            }
+                            break;
                         
+                        case MessageHandler.MessageType.Movement:
+                            var movement = MessageHandler.ParseMovement(message);
+                            if (movement != null) OnMovedPaddleEvent?.Invoke((KeyValuePair<string, float>) movement);
+                            break;
                         default:
                             break;
                     }

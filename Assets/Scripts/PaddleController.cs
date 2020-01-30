@@ -5,53 +5,31 @@ using UnityEngine;
 
 public class PaddleController : MonoBehaviour
 {
-    // Start is called before the first frame update
-    public float speed = 5;
+    private float movement;
+
+    public string TeamCode { get; set; }
     private Rigidbody2D _rigidbody2D;
-    private Vector2 move;
     public Collider2D collider2d;
     void Start()
     {
         _rigidbody2D = GetComponent<Rigidbody2D>();
         collider2d = GetComponent<Collider2D>();
-        move = _rigidbody2D.velocity * speed;
     }
-
-    // Update is called once per frame
+    
     private void FixedUpdate()
     {
-        HandlePresses();
+        TransformSmoothly();
+    }
+    
+    public void HandleClick(float mov)
+    {
+        movement = mov;
     }
 
-    void Update()
+    private void TransformSmoothly()
     {
-        HandlePresses();
-       _rigidbody2D.velocity = move;
-    }
-
-    void HandlePresses()
-    {
-        if (gameObject.name == "Paddle Left")
-        {
-            if (Input.GetKeyUp(KeyCode.UpArrow))
-            {
-                var y = transform.position.y + 10;
-                var pos = new Vector3(transform.position.x, y);
-                transform.position = Vector3.Lerp(transform.position, pos, 0.5f * Time.deltaTime);
-            }
-            else if (Input.GetKeyUp(KeyCode.DownArrow))
-            {
-                var y = transform.position.y -  7.6f;
-                var pos = new Vector3(transform.position.x, y);
-                transform.position = Vector3.Lerp(transform.position, pos, 0.5f * Time.deltaTime);
-            }
-        }
-        else
-        {
-            if (Input.GetKeyDown(KeyCode.W))
-                move.y = 1 * speed;
-            else if (Input.GetKeyDown(KeyCode.S))
-                move.y = -1 * speed;
-        }
+        var y = transform.position.y + movement;
+        var pos = new Vector3(transform.position.x, y);
+        transform.position = Vector3.Lerp(transform.position, pos, 0.5f * Time.deltaTime);
     }
 }

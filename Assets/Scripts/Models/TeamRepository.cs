@@ -6,26 +6,28 @@ namespace Models
 {
     public class TeamRepository
     {
-        private static List<Team> _teams;
+        private List<Team> _teams;
+        private static TeamRepository _instance;
         
         private TeamRepository() { }
 
         public static readonly object _lock = new object();
 
-        public static List<Team> GetTeams()
+        public static TeamRepository GetTeamRepository()
         {
-            if (_teams == null)
+            if (_instance == null)
             {
                 lock (_lock)
                 {
-                    if (_teams == null)
+                    if (_instance == null)
                     {
-                        _teams = new List<Team>();
+                        _instance = new TeamRepository();
+                        _instance._teams = new List<Team>(2);
                     }
                 }
             }
 
-            return _teams;
+            return _instance;
         }
 
         public Team FindTeam(Predicate<Team> expression)
@@ -41,6 +43,12 @@ namespace Models
             _teams.Remove(currentTeam);
             _teams.Add(team);
             return true;
+        }
+
+        public void IncrementScore(Side teamSide)
+        {
+            if (teamSide == Side.Right) _teams[0].Score++;
+            else _teams[1].Score++;
         }
 
         public bool Init(List<Team> teams)
