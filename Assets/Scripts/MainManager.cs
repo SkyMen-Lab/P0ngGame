@@ -106,7 +106,9 @@ public class MainManager : MonoBehaviour
 
     private void MovePaddle(KeyValuePair<string, float> moveContext)
     {
-        var side = _teamRepository.FindTeamByCode(moveContext.Key).Side;
+        var team = _teamRepository.FindTeamByCode(moveContext.Key);
+        if (team == null) return;
+        var side = team.Side;
         GameObject paddle;
         if (side == Side.Right)
             paddle = GameObject.Find("Paddle Right");

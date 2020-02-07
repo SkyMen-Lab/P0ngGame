@@ -18,12 +18,13 @@ public class PaddleController : MonoBehaviour
     
     private void FixedUpdate()
     {
-        TransformSmoothly();
+        
     }
     
     public void HandleClick(float mov)
     {
         movement = mov;
+        TransformSmoothly();
     }
 
     private void TransformSmoothly()
