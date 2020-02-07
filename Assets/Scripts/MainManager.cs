@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Timers;
 using Models;
 using Services;
 using UnityEngine;
@@ -10,6 +11,7 @@ public class MainManager : MonoBehaviour
     private UIService _ui;
     private NetworkManager _networkManager;
     private BallController _ballController;
+    private Timer _timer;
     private readonly TeamRepository _teamRepository = TeamRepository.GetTeamRepository();
 
     private bool _isConnected;
@@ -22,6 +24,10 @@ public class MainManager : MonoBehaviour
 
     private void Start()
     {
+        _timer = new Timer(5000);
+        _timer.Elapsed += TimerOnElapsed;
+        _timer.AutoReset = false;
+        
         //Ball instance can be accessed only on Start 
         _ballController = BallController.Instance;
         _ballController.OnBallScoredEvent += ProcessScore;
@@ -33,21 +39,18 @@ public class MainManager : MonoBehaviour
         _networkManager.OnGameFinishedEvent += FinishGame;
         
         //TODO: Connect in background
-        _isConnected = _networkManager.Connect("127.0.0.1", 5050);
+        _isConnected = _networkManager.Connect("127.0.0.1", 3434);
+    }
+
+    private void TimerOnElapsed(object sender, ElapsedEventArgs e)
+    {
+        Debug.LogWarning("Server is offline. Reconnecting");
+        _networkManager.Connect("127.0.0.1", 3434);
     }
 
     private void OnEnable()
     {
 
-    }
-    
-
-    
-    
-    IEnumerator TryConnect()
-    {
-        _networkManager.Connect("127.0.0.1", 3434);
-        yield return new WaitForSeconds(4.0f);
     }
 
     private void OnDisable()
@@ -65,22 +68,34 @@ public class MainManager : MonoBehaviour
     private void ConnectToServerHandler()
     {
         _ui.status.text = "Awaiting Teams";
-        StopCoroutine(TryConnect());
     }
 
     private void DisconnectFromServerHandler()
     {
         _ui.status.text = "Server is unavailable";
-        StartCoroutine(TryConnect());
+        Reconnect();
+    }
+
+    private void Reconnect()
+    {
+        if (!_networkManager.IsConnected())
+        {
+            _timer?.Start();
+        }
+        else
+        {
+            _timer?.Stop();
+            Debug.Log("Back online");
+        }
     }
 
     private void TeamReceived(List<Team> teams)
     {
         teams[0].Side = Side.Right;
-        GameObject.FindWithTag("addle Right").GetComponent<PaddleController>().TeamCode = teams[0].Code;
+        GameObject.Find("Paddle Right").GetComponent<PaddleController>().TeamCode = teams[0].Code;
         
         teams[1].Side = Side.Left;
-        GameObject.FindWithTag("Paddle Left").GetComponent<PaddleController>().TeamCode = teams[1].Code;
+        GameObject.Find("Paddle Left").GetComponent<PaddleController>().TeamCode = teams[1].Code;
         
         _teamRepository.Init(teams);
 

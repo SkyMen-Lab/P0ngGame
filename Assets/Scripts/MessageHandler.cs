@@ -18,7 +18,7 @@ public static class MessageHandler
         if (string.IsNullOrEmpty(message))
             return null;
         
-        if (message[0] == '{') return MessageType.InitTeams;
+        if (message[0] == '[') return MessageType.InitTeams;
         if (message == "start") return MessageType.StartGame;
         if (char.IsDigit(message[0])) return MessageType.Movement;
         if (message == "finish") return MessageType.FinishGame;
