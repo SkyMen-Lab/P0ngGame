@@ -3,6 +3,7 @@ using System.Collections;
 using System.Threading;
 using System.Timers;
 using Base;
+using Models;
 using Services;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,12 +17,6 @@ public class NetworkManager : NetworkBase
     protected override void AwakeSetup()
     {
         _uiService = GetComponent<UIService>();
-    }
-
-    public override void SendMessageToServer(string message)
-    {
-        if (!string.IsNullOrEmpty(message))
-            base.SendMessageToServer(message);
     }
 
     public bool Connect(string ip, int port)

@@ -38,7 +38,6 @@ public class MainManager : MonoBehaviour
         _networkManager.OnMovedPaddleEvent += MovePaddle;
         _networkManager.OnGameFinishedEvent += FinishGame;
         
-        //TODO: Connect in background
         _isConnected = _networkManager.Connect("127.0.0.1", 3434);
     }
 
@@ -101,7 +100,10 @@ public class MainManager : MonoBehaviour
 
         _ui.status.text = "";
         _ui.firstTeamLabel.text = teams[0].Name;
+        _ui.firstTeamScore.text = teams[0].Score.ToString();
+        
         _ui.secondTeamLabel.text = teams[1].Name;
+        _ui.secondTeamScore.text = teams[1].Score.ToString();
     }
 
     private void MovePaddle(KeyValuePair<string, float> moveContext)

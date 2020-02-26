@@ -13,25 +13,13 @@ public static class MessageHandler
         FinishGame
     }
 
-    public static MessageType? ProcessMessageType(string message)
+    public static MessageType? ProcessPacket(Packet packet)
     {
-        if (string.IsNullOrEmpty(message))
-            return null;
-        
-        if (message[0] == '[') return MessageType.InitTeams;
-        if (message == "start") return MessageType.StartGame;
-        if (char.IsDigit(message[0]) || message[0] == '-') return MessageType.Movement;
-        if (message == "finish") return MessageType.FinishGame;
+        if (packet.MetaData == Meta.Connect) return MessageType.InitTeams;
+        if (packet.Message == "start") return MessageType.StartGame;
+        if (char.IsDigit(packet.Message[0]) || packet.Message[0] == '-') return MessageType.Movement;
+        if (packet.Message == "finish") return MessageType.FinishGame;
         return null;
-    }
-
-    public static List<Team> ParseTeams(string message)
-    {
-        if (string.IsNullOrEmpty(message))
-            return null;
-
-        var list = JsonConvert.DeserializeObject<List<Team>>(message);
-        return list;
     }
 
     public static KeyValuePair<string, float> ParseMovement(string message)
