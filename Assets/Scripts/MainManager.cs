@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Timers;
 using Models;
+using Newtonsoft.Json;
 using Services;
 using UnityEngine;
 
@@ -11,8 +12,14 @@ public class MainManager : MonoBehaviour
     private UIService _ui;
     private NetworkManager _networkManager;
     private BallController _ballController;
-    private Timer _timer;
     private readonly TeamRepository _teamRepository = TeamRepository.GetTeamRepository();
+
+    #region Timers
+
+    private Timer _connectionTimer;
+    
+
+    #endregion
 
     private bool _isConnected;
 
@@ -24,9 +31,9 @@ public class MainManager : MonoBehaviour
 
     private void Start()
     {
-        _timer = new Timer(5000);
-        _timer.Elapsed += TimerOnElapsed;
-        _timer.AutoReset = false;
+        _connectionTimer = new Timer(5000);
+        _connectionTimer.Elapsed += ConnectionTimerOnElapsed;
+        _connectionTimer.AutoReset = false;
         
         //Ball instance can be accessed only on Start 
         _ballController = BallController.Instance;
@@ -36,12 +43,11 @@ public class MainManager : MonoBehaviour
         _networkManager.OnTeamReceivedEvent += TeamReceived;
         _networkManager.OnStartedGameEvent += StartMovingBall;
         _networkManager.OnMovedPaddleEvent += MovePaddle;
-        _networkManager.OnGameFinishedEvent += FinishGame;
-        
+
         _isConnected = _networkManager.Connect("127.0.0.1", 3434);
     }
 
-    private void TimerOnElapsed(object sender, ElapsedEventArgs e)
+    private void ConnectionTimerOnElapsed(object sender, ElapsedEventArgs e)
     {
         Debug.LogWarning("Server is offline. Reconnecting");
         _networkManager.Connect("127.0.0.1", 3434);
@@ -59,7 +65,6 @@ public class MainManager : MonoBehaviour
         _networkManager.OnTeamReceivedEvent -= TeamReceived;
         _networkManager.OnStartedGameEvent -= StartMovingBall;
         _networkManager.OnMovedPaddleEvent -= MovePaddle;
-        _networkManager.OnGameFinishedEvent -= FinishGame;
 
         _ballController.OnBallScoredEvent -= ProcessScore;
     }
@@ -79,11 +84,11 @@ public class MainManager : MonoBehaviour
     {
         if (!_networkManager.IsConnected())
         {
-            _timer?.Start();
+            _connectionTimer?.Start();
         }
         else
         {
-            _timer?.Stop();
+            _connectionTimer?.Stop();
             Debug.Log("Back online");
         }
     }
@@ -98,7 +103,7 @@ public class MainManager : MonoBehaviour
         
         _teamRepository.Init(teams);
 
-        _ui.status.text = "";
+        _ui.status.text = string.Empty;
         _ui.firstTeamLabel.text = teams[0].Name;
         _ui.firstTeamScore.text = teams[0].Score.ToString();
         
@@ -121,27 +126,39 @@ public class MainManager : MonoBehaviour
 
     private void ProcessScore(GameObject zone)
     {
-        //TODO: send updates to server
-        
+
         Side side;
+        Team team;
         if (zone.name == "Left")
         {
             side = Side.Right;
             _teamRepository.IncrementScore(side);
-            _ui.firstTeamScore.text = _teamRepository.FindTeam(x => x.Side == side).Score.ToString();
+            team = _teamRepository.FindTeam(x => x.Side == side);
+            _ui.firstTeamScore.text = team.Score.ToString();
         }
         else
         {
             side = Side.Left;
             _teamRepository.IncrementScore(side);
-            _ui.firstTeamScore.text = _teamRepository.FindTeam(x => x.Side == side).Score.ToString();
+            team = _teamRepository.FindTeam(x => x.Side == side);
+            _ui.secondTeamScore.text = team.Score.ToString();
         }
+
+        var packet = new Packet(Meta.Message, JsonConvert.SerializeObject(team));
+        _networkManager.SendPacketToServer(packet);
     }
 
     private void FinishGame()
     {
-        //TODO: finish
         _ballController.StopTheBall();
+
+        var teams = _teamRepository.GetList();
+
+        if (teams.Count == 2)
+        {
+            var packet = new Packet(Meta.Disconnect, JsonConvert.SerializeObject(teams));
+            _networkManager.SendPacketToServer(packet);
+        }
     }
 
     private void StartMovingBall()
@@ -149,7 +166,4 @@ public class MainManager : MonoBehaviour
         _ballController.ResetBall(BallController.StartDirection.Left);
         Debug.Log("Ball started moving");
     }
-    
-    
-    
 }
