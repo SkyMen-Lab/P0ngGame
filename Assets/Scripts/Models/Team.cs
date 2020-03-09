@@ -9,6 +9,7 @@ namespace Models
         public string Name { get; set; }
         public int Score { get; set; }
         public float PuddleSpeed { get; set; }
+        public int NumberOfPlayers { get; set; }
         
         [JsonIgnore]
         public Side Side { get; set; }

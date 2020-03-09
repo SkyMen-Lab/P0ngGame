@@ -660,6 +660,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c19bd6717fb4994b011d9f018b231ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ipAdress: 127.0.0.1
+  port: 3434
 --- !u!114 &734991603
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -867,8 +869,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 5, y: 35}
-  m_SizeDelta: {x: 381.1, y: 45.7}
+  m_AnchoredPosition: {x: 20.3, y: 16}
+  m_SizeDelta: {x: 514.78, y: 122.43}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &751599815
 MonoBehaviour:
@@ -883,25 +885,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.8980393, g: 0.8980393, b: 0.8980393, a: 1}
+  m_Color: {r: 0.8980393, g: 0.8980393, b: 0.8980393, a: 0.3764706}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 30
+    m_FontSize: 50
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 2
-    m_MaxSize: 40
-    m_Alignment: 1
+    m_MaxSize: 50
+    m_Alignment: 4
     m_AlignByGeometry: 0
-    m_RichText: 1
+    m_RichText: 0
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Server is unavailable
+  m_Text: Server  is  unavailable
 --- !u!222 &751599816
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1170,10 +1172,20 @@ PrefabInstance:
       propertyPath: m_FontData.m_Alignment
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1203748176109864091, guid: bf98deb3a91af44f4b2b52b6032b8ce6,
+        type: 3}
+      propertyPath: m_Text
+      value: Team Two
+      objectReference: {fileID: 0}
     - target: {fileID: 4712737771686811038, guid: bf98deb3a91af44f4b2b52b6032b8ce6,
         type: 3}
       propertyPath: m_Name
       value: Right Team Label
+      objectReference: {fileID: 0}
+    - target: {fileID: 4712737771686811038, guid: bf98deb3a91af44f4b2b52b6032b8ce6,
+        type: 3}
+      propertyPath: m_TagString
+      value: Team Label
       objectReference: {fileID: 0}
     - target: {fileID: 7461091860476402066, guid: bf98deb3a91af44f4b2b52b6032b8ce6,
         type: 3}
@@ -1403,7 +1415,7 @@ PrefabInstance:
     - target: {fileID: 1203748176109864091, guid: bf98deb3a91af44f4b2b52b6032b8ce6,
         type: 3}
       propertyPath: m_Text
-      value: Team Two
+      value: Team One
       objectReference: {fileID: 0}
     - target: {fileID: 1203748176109864091, guid: bf98deb3a91af44f4b2b52b6032b8ce6,
         type: 3}
@@ -1414,6 +1426,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Left Team Label
+      objectReference: {fileID: 0}
+    - target: {fileID: 4712737771686811038, guid: bf98deb3a91af44f4b2b52b6032b8ce6,
+        type: 3}
+      propertyPath: m_TagString
+      value: Team Label
       objectReference: {fileID: 0}
     - target: {fileID: 7461091860476402066, guid: bf98deb3a91af44f4b2b52b6032b8ce6,
         type: 3}

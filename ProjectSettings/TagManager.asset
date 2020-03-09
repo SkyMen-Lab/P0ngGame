@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Ball
   - GoalLine
+  - Team Label
   layers:
   - Default
   - TransparentFX

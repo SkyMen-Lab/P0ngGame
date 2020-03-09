@@ -6,9 +6,13 @@ using Models;
 using Newtonsoft.Json;
 using Services;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MainManager : MonoBehaviour
 {
+    public string ipAdress;
+    public int port;
+    
     private UIService _ui;
     private NetworkManager _networkManager;
     private BallController _ballController;
@@ -44,13 +48,18 @@ public class MainManager : MonoBehaviour
         _networkManager.OnStartedGameEvent += StartMovingBall;
         _networkManager.OnMovedPaddleEvent += MovePaddle;
 
-        _isConnected = _networkManager.Connect("127.0.0.1", 3434);
+        _isConnected = _networkManager.Connect(ipAdress, port);
+
+        foreach (var label in GameObject.FindGameObjectsWithTag("Team Label"))
+        {
+            label.GetComponent<Text>().text = string.Empty;
+        }
     }
 
     private void ConnectionTimerOnElapsed(object sender, ElapsedEventArgs e)
     {
         Debug.LogWarning("Server is offline. Reconnecting");
-        _networkManager.Connect("127.0.0.1", 3434);
+        _networkManager.Connect(ipAdress, port);
     }
 
     private void OnEnable()
@@ -144,7 +153,13 @@ public class MainManager : MonoBehaviour
             _ui.secondTeamScore.text = team.Score.ToString();
         }
 
-        var packet = new Packet(Meta.Message, JsonConvert.SerializeObject(team));
+        var message = new Message
+        {
+            ContentType = GameAction.Score,
+            Content = JsonConvert.SerializeObject(team)
+        };
+        
+        var packet = new Packet(Meta.Message, JsonConvert.SerializeObject(message));
         _networkManager.SendPacketToServer(packet);
     }
 
