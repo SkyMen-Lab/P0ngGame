@@ -345,6 +345,14 @@ PrefabInstance:
       propertyPath: m_Interpolate
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 21874806, guid: cc2df5c2855c745aab17336d7456c67e, type: 3}
+      propertyPath: m_CollisionDetection
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 21874807, guid: cc2df5c2855c745aab17336d7456c67e, type: 3}
+      propertyPath: collider2d
+      value: 
+      objectReference: {fileID: 2078863059}
     - target: {fileID: 606642061727369269, guid: cc2df5c2855c745aab17336d7456c67e,
         type: 3}
       propertyPath: m_Name
@@ -625,8 +633,8 @@ GameObject:
   m_Component:
   - component: {fileID: 734991601}
   - component: {fileID: 734991602}
-  - component: {fileID: 734991604}
   - component: {fileID: 734991603}
+  - component: {fileID: 734991604}
   m_Layer: 0
   m_Name: ClientManager
   m_TagString: Untagged
@@ -688,7 +696,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 734991600}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c8ff995671464abebb46f55637de6c53, type: 3}
+  m_Script: {fileID: 11500000, guid: 5b071a55a09e4ca4970800603fd3a072, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &749976950
@@ -1077,6 +1085,12 @@ MonoBehaviour:
   firstTeamScore: {fileID: 1612198531}
   secondTeamScore: {fileID: 703326083}
   status: {fileID: 0}
+--- !u!61 &1510329340 stripped
+BoxCollider2D:
+  m_CorrespondingSourceObject: {fileID: 21874803, guid: cc2df5c2855c745aab17336d7456c67e,
+    type: 3}
+  m_PrefabInstance: {fileID: 7440735126369804490}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &1595754985 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7461091860476402066, guid: bf98deb3a91af44f4b2b52b6032b8ce6,
@@ -1709,6 +1723,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!61 &2078863059 stripped
+BoxCollider2D:
+  m_CorrespondingSourceObject: {fileID: 21874803, guid: cc2df5c2855c745aab17336d7456c67e,
+    type: 3}
+  m_PrefabInstance: {fileID: 678275782}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2597456996723987738
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1808,6 +1828,10 @@ PrefabInstance:
       propertyPath: speed
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 21874807, guid: cc2df5c2855c745aab17336d7456c67e, type: 3}
+      propertyPath: collider2d
+      value: 
+      objectReference: {fileID: 1510329340}
     - target: {fileID: 606642061727369269, guid: cc2df5c2855c745aab17336d7456c67e,
         type: 3}
       propertyPath: m_Name
@@ -1826,7 +1850,7 @@ PrefabInstance:
     - target: {fileID: 7297590819790786596, guid: cc2df5c2855c745aab17336d7456c67e,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.45132884
+      value: -0.99
       objectReference: {fileID: 0}
     - target: {fileID: 7297590819790786596, guid: cc2df5c2855c745aab17336d7456c67e,
         type: 3}

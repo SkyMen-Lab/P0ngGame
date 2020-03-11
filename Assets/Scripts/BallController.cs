@@ -46,12 +46,6 @@ public class BallController : KinematicObject
             Destroy(this);
         }
     }
-    
-
-    private void Update()
-    {
-        Body.velocity = Direction * Speed;
-    }
 
     private void OnCollisionEnter2D(Collision2D other)
     {

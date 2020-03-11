@@ -33,7 +33,7 @@ public class MainManager : MonoBehaviour
         _networkManager = GetComponent<NetworkManager>();
     }
 
-    private void Start()
+    private async void Start()
     {
         _connectionTimer = new Timer(5000);
         _connectionTimer.Elapsed += ConnectionTimerOnElapsed;
@@ -48,7 +48,7 @@ public class MainManager : MonoBehaviour
         _networkManager.OnStartedGameEvent += StartMovingBall;
         _networkManager.OnMovedPaddleEvent += MovePaddle;
 
-        _isConnected = _networkManager.Connect(ipAdress, port);
+        await _networkManager.ConnectToServerApi(ipAdress, port);
 
         foreach (var label in GameObject.FindGameObjectsWithTag("Team Label"))
         {
@@ -56,10 +56,10 @@ public class MainManager : MonoBehaviour
         }
     }
 
-    private void ConnectionTimerOnElapsed(object sender, ElapsedEventArgs e)
+    private async void ConnectionTimerOnElapsed(object sender, ElapsedEventArgs e)
     {
         Debug.LogWarning("Server is offline. Reconnecting");
-        _networkManager.Connect(ipAdress, port);
+        await _networkManager.ConnectToServerApi(ipAdress, port);
     }
 
     private void OnEnable()
