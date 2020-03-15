@@ -46,14 +46,14 @@ public class BallController : KinematicObject
             Destroy(this);
         }
     }
-
+    
     private void OnCollisionEnter2D(Collision2D other)
     {
         if ((other.gameObject.name == "Paddle Right") || (other.gameObject.name == "Paddle Left"))
         {
             Speed += 0.1f;
-            HandleHit(other);
         }
+        HandleHit(other);
     }
 
     private void HandleHit(Collision2D col)
@@ -61,11 +61,15 @@ public class BallController : KinematicObject
         float y = (transform.position.y - col.transform.position.y) / col.collider.bounds.size.y;
         if (col.gameObject.name == "Paddle Right")
         {
-            Direction = new Vector2(1, y).normalized;
+            Direction = new Vector2(-1, y);
         } 
-        if (col.gameObject.name == "Paddle Left")
+        else if (col.gameObject.name == "Paddle Left")
         {
-            Direction = new Vector2(-1, y).normalized;
+            Direction = new Vector2(1, y);
+        }
+        else if (col.gameObject.CompareTag("Wall"))
+        {
+            Direction = new Vector2(Direction.x, Direction.y * -1);
         }
         Body.velocity = Direction * Speed;
     }
