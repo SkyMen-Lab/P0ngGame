@@ -38,8 +38,9 @@ public class MainManager : MonoBehaviour
     private async void Start()
     {
         _connectionTimer = new Timer(5000);
-        _connectionTimer.Elapsed += ConnectionTimerOnElapsed;
-        _connectionTimer.AutoReset = false;
+        _connectionTimer.Elapsed += CheckConnectionTimerOnElapsed;
+        _connectionTimer.AutoReset = true;
+        _connectionTimer.Start();
         
         //Ball instance can be accessed only on Start 
         _ballController = BallController.Instance;
@@ -59,10 +60,14 @@ public class MainManager : MonoBehaviour
         }
     }
 
-    private async void ConnectionTimerOnElapsed(object sender, ElapsedEventArgs e)
+    private async void CheckConnectionTimerOnElapsed(object sender, ElapsedEventArgs e)
     {
-        Debug.LogWarning("Server is offline. Reconnecting");
-        await _networkManager.ConnectToServerApi(ipAdress, port);
+        var isConnected = _networkManager.CheckConnection();
+        if (!isConnected)
+        {
+            Debug.LogWarning("Server is offline. Reconnecting");
+            await _networkManager.ConnectToServerApi(ipAdress, port);
+        }
     }
 
     private void OnEnable()
@@ -127,10 +132,10 @@ public class MainManager : MonoBehaviour
         var teams = dto.Teams;
         float duration = dto.Duration;
         
-        teams[0].Side = Side.Right;
+        teams[0].Side = Side.Left;
         GameObject.Find("Paddle Right").GetComponent<PaddleController>().TeamCode = teams[0].Code;
         
-        teams[1].Side = Side.Left;
+        teams[1].Side = Side.Right;
         GameObject.Find("Paddle Left").GetComponent<PaddleController>().TeamCode = teams[1].Code;
         
         _teamRepository.Init(teams);
@@ -192,23 +197,19 @@ public class MainManager : MonoBehaviour
             side = Side.Right;
             _teamRepository.IncrementScore(side);
             team = _teamRepository.FindTeam(x => x.Side == side);
-            _ui.firstTeamScore.text = team.Score.ToString();
+            _ui.secondTeamScore.text = team.Score.ToString();
         }
         else
         {
             side = Side.Left;
             _teamRepository.IncrementScore(side);
             team = _teamRepository.FindTeam(x => x.Side == side);
-            _ui.secondTeamScore.text = team.Score.ToString();
+            _ui.firstTeamScore.text = team.Score.ToString();
         }
 
-        var message = new Message
-        {
-            ContentType = GameAction.Score,
-            Content = JsonConvert.SerializeObject(team)
-        };
-        
-        var packet = new Packet(Meta.Message, JsonConvert.SerializeObject(message));
+        var message = new Message(GameAction.Score, JsonConvert.SerializeObject(team));
+
+        var packet = new Packet(Meta.Message, message.ToJson());
         _networkManager.SendPacketToServer(packet);
     }
 
@@ -227,7 +228,8 @@ public class MainManager : MonoBehaviour
                 MaxSpeedLevel = 3,
                 Teams = teams
             };
-            var packet = new Packet(Meta.Disconnect, JsonConvert.SerializeObject(gameFinishedDTO));
+            var message = new Message(GameAction.FinishGame, JsonConvert.SerializeObject(gameFinishedDTO));
+            var packet = new Packet(Meta.Disconnect, message.ToJson());
             _networkManager.SendPacketToServer(packet);
         }
     }

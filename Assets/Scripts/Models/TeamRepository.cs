@@ -52,7 +52,7 @@ namespace Models
 
         public void IncrementScore(Side teamSide)
         {
-            if (teamSide == Side.Right) _teams[0].Score++;
+            if (teamSide == Side.Left) _teams[0].Score++;
             else _teams[1].Score++;
         }
 
