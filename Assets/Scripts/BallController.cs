@@ -6,32 +6,54 @@ using Base;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class BallController : MonoBehaviour
+public class BallController : KinematicObject
 {
-    // Start is called before the first frame update
-    public float speed = 5;
-    private Rigidbody2D _rigidbody2D;
-    private Vector2 move;
-    private Text RightScoreField, LeftScoreField;
-    private int RightTeamScore = 0;
-    private int LeftTeamScore = 0;
-    void Start()
+    #region Events
+
+    public delegate void BallScored(GameObject zone);
+    public event BallScored OnBallScoredEvent;
+
+    #endregion
+
+    #region other Game objects
+
+    public GameObject spawnPoint;
+    private NetworkManager _networkManager;
+    public static BallController Instance;
+
+    #endregion
+
+    #region Constants
+
+    private const float InitialSpeed = 1.5f;
+
+    #endregion
+    public enum StartDirection
     {
-        _rigidbody2D = GetComponent<Rigidbody2D>();
-        RightScoreField = GameObject.Find("RightSideScore").GetComponent<Text>();
-        LeftScoreField = GameObject.Find("LeftSideScore").GetComponent<Text>();
-        move = _rigidbody2D.velocity * speed;
-        move.x = -1 * speed;
-        _rigidbody2D.velocity = move;
+        Left = -1,
+        Right = 1
     }
 
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            Body = GetComponent<Rigidbody2D>();
+        }
+        else
+        {
+            Destroy(this);
+        }
+    }
+    
     private void OnCollisionEnter2D(Collision2D other)
     {
         if ((other.gameObject.name == "Paddle Right") || (other.gameObject.name == "Paddle Left"))
         {
-            speed += (float) 0.2;
-            HandleHit(other);
+            Speed += 0.1f;
         }
+        HandleHit(other);
     }
 
     private void HandleHit(Collision2D col)
@@ -39,41 +61,51 @@ public class BallController : MonoBehaviour
         float y = (transform.position.y - col.transform.position.y) / col.collider.bounds.size.y;
         if (col.gameObject.name == "Paddle Right")
         {
-            move = new Vector2(1, y).normalized;
+            Direction = new Vector2(-1, y);
         } 
-        if (col.gameObject.name == "Paddle Left")
+        else if (col.gameObject.name == "Paddle Left")
         {
-            move = new Vector2(-1, y).normalized;
+            Direction = new Vector2(1, y);
         }
-        _rigidbody2D.velocity = move * speed;
+        else if (col.gameObject.CompareTag("Wall"))
+        {
+            Direction = new Vector2(Direction.x, Direction.y * -1);
+        }
+        Body.velocity = Direction * Speed;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (!other.gameObject.CompareTag("GoalLine")) return;
-
-        if (other.gameObject.name == "Right") LeftTeamScore++;
-        else if (other.gameObject.name == "Left") RightTeamScore++;
-
-        gameObject.SetActive(false);
-        //Thread.Sleep(300);
-        UpdateScore();
-        var spawnPoint = GameObject.Find("SpawnPoint");
-
-        transform.position = spawnPoint.transform.position;
-        gameObject.SetActive(true);
-        move = Vector2.right;
-        speed = 5;
-        _rigidbody2D.velocity = move * speed;
+        //ball enter the goal zone
+        OnBallScoredEvent?.Invoke(other.gameObject);
+        var direction = other.gameObject.name == "Right" ? StartDirection.Left : StartDirection.Right;
+        ResetBall(direction);
     }
 
-    private void UpdateScore()
+    public void ResetBall(StartDirection startDirection)
     {
-        RightScoreField.text = RightTeamScore.ToString();
-        LeftScoreField.text = LeftTeamScore.ToString();
+        var position = spawnPoint.transform.position;
+        //transform.position = Vector3.Lerp(transform.position, position, Time.deltaTime * 2);
+        transform.position = position;
+        Direction = new Vector2((float) startDirection, 0);
+        Speed = InitialSpeed;
+        Body.velocity = Direction * Speed;
     }
 
+    public void StopTheBall()
+    {
+        transform.position = spawnPoint.transform.position;
+        Speed = 0;
+        Direction = Vector2.zero;
+        Body.velocity = Direction * Speed;
+    }
+    
     private void CalculateDirection(Collision2D collision2D)
+    {
+        
+    }
+
+    protected override void ComputeVelocity()
     {
         
     }
