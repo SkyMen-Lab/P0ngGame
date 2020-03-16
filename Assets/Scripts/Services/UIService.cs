@@ -8,7 +8,8 @@ namespace Services
     {
         #region UI Elements
 
-        public Text firstTeamLabel, secondTeamLabel, firstTeamScore, secondTeamScore, status;
+        public Text firstTeamLabel, secondTeamLabel, firstTeamScore, secondTeamScore, status, timer,
+            teamOnePlayers, teamTwoPlayers;
         public static UIService Instance;
         #endregion
 
