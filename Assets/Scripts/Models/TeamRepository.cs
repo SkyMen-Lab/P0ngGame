@@ -67,5 +67,10 @@ namespace Models
         {
             return FindTeam(x => string.Equals(code, x.Code));
         }
+
+        public void Reset()
+        {
+            _instance = null;
+        }
     }
 }

@@ -29,6 +29,11 @@ public class MainManager : MonoBehaviour
 
     private bool _isConnected;
 
+    #region constants
+    
+
+    #endregion
+
     private void Awake()
     {
         _ui = GetComponent<UIService>();
@@ -46,11 +51,12 @@ public class MainManager : MonoBehaviour
         _ballController = BallController.Instance;
         _ballController.OnBallScoredEvent += ProcessScore;
         _networkManager.OnServerConnectedEvent += ConnectToServerHandler;
-        _networkManager.OnServerDisconnected += DisconnectFromServerHandler;
+        _networkManager.OnServerDisconnectedEvent += DisconnectFromServerHandler;
         _networkManager.OnConfigReceivedEvent += ConfigReceived;
         _networkManager.OnStartedGameEvent += StartMovingBall;
         _networkManager.OnMovedPaddleEvent += MovePaddle;
         _networkManager.OnUpdateNumberOfPlayersEvent += UpdateNumberOfPlayers;
+        _networkManager.OnResetServerEvent += ResetServer;
 
         await _networkManager.ConnectToServerApi(ipAdress, port);
 
@@ -58,6 +64,7 @@ public class MainManager : MonoBehaviour
         {
             label.GetComponent<Text>().text = string.Empty;
         }
+        
     }
 
     private async void CheckConnectionTimerOnElapsed(object sender, ElapsedEventArgs e)
@@ -70,19 +77,15 @@ public class MainManager : MonoBehaviour
         }
     }
 
-    private void OnEnable()
-    {
-
-    }
-
     private void OnDisable()
     {
         _networkManager.OnServerConnectedEvent -= ConnectToServerHandler;
-        _networkManager.OnServerDisconnected -= DisconnectFromServerHandler;
+        _networkManager.OnServerDisconnectedEvent -= DisconnectFromServerHandler;
         _networkManager.OnConfigReceivedEvent -= ConfigReceived;
         _networkManager.OnStartedGameEvent -= StartMovingBall;
         _networkManager.OnMovedPaddleEvent -= MovePaddle;
         _networkManager.OnUpdateNumberOfPlayersEvent -= UpdateNumberOfPlayers;
+        _networkManager.OnResetServerEvent -= ResetServer;
 
         _ballController.OnBallScoredEvent -= ProcessScore;
     }
@@ -239,5 +242,26 @@ public class MainManager : MonoBehaviour
         _ballController.ResetBall(BallController.StartDirection.Left);
         StartCoroutine(RunGameTimer());
         Debug.Log("Ball started moving");
+    }
+
+    private void ResetServer()
+    {
+        _ui.status.text = "Awaiting Teams";
+        
+        _ui.firstTeamLabel.text = string.Empty;
+        _ui.secondTeamLabel.text = string.Empty;
+        
+        _ui.teamOnePlayers.text = string.Empty;
+        _ui.teamTwoPlayers.text = string.Empty;
+        
+        _ui.firstTeamScore.text = string.Empty;
+        _ui.secondTeamScore.text = string.Empty;
+
+        _ui.timer.text = "0.00";
+        
+        Config.GetConfig().Reset();
+        _teamRepository.Reset();
+        
+        Debug.Log("Server has been reset");
     }
 }

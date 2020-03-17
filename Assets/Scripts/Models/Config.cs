@@ -1,3 +1,5 @@
+using System;
+
 namespace Models
 {
     public class Config
@@ -31,6 +33,11 @@ namespace Models
         {
             GameCode = code;
             Duration = duration;
+        }
+
+        public void Reset()
+        {
+            _instance = null;
         }
     }
 }
