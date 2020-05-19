@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Timers;
 using DTOs;
+using Mirror;
 using Models;
 using Newtonsoft.Json;
 using Services;
@@ -88,8 +89,10 @@ public class MainManager : MonoBehaviour
         _networkManager.OnResetServerEvent -= ResetServer;
 
         _ballController.OnBallScoredEvent -= ProcessScore;
+        
+        _connectionTimer.Stop();
     }
-
+    
     private void ConnectToServerHandler()
     {
         _ui.status.text = "Awaiting Teams";
