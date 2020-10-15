@@ -19,6 +19,7 @@ public class MainManager : MonoBehaviour
     private UIService _ui;
     private NetworkManager _networkManager;
     private BallController _ballController;
+    //singleton
     private readonly TeamRepository _teamRepository = TeamRepository.GetTeamRepository();
 
     #region Timers
@@ -59,7 +60,9 @@ public class MainManager : MonoBehaviour
         _networkManager.OnUpdateNumberOfPlayersEvent += UpdateNumberOfPlayers;
         _networkManager.OnResetServerEvent += ResetServer;
 
-        await _networkManager.ConnectToServerApi(ipAdress, port);
+         _networkManager.ConnectToServerApi(ipAdress, port);
+
+         _ui.finishGameBtn.onClick.AddListener(FinishGame);
 
         foreach (var label in GameObject.FindGameObjectsWithTag("Team Label"))
         {
@@ -68,13 +71,13 @@ public class MainManager : MonoBehaviour
         
     }
 
-    private async void CheckConnectionTimerOnElapsed(object sender, ElapsedEventArgs e)
+    private void CheckConnectionTimerOnElapsed(object sender, ElapsedEventArgs e)
     {
         var isConnected = _networkManager.CheckConnection();
         if (!isConnected)
         {
             Debug.LogWarning("Server is offline. Reconnecting");
-            await _networkManager.ConnectToServerApi(ipAdress, port);
+            _networkManager.ConnectToServerApi(ipAdress, port);
         }
     }
 
@@ -126,7 +129,7 @@ public class MainManager : MonoBehaviour
             time -= Time.deltaTime;
             int mins = (int) (time / 60);
             int secs = (int)time - mins * 60;
-            _ui.timer.text = $"{mins}:{secs.ToString("00")}";
+            _ui.timer.text = $"{mins}:{secs:00}";
             yield return null;
         } 
         
@@ -221,6 +224,7 @@ public class MainManager : MonoBehaviour
 
     private void FinishGame()
     {
+        Debug.Log("finish game button clicked");
         _ballController.StopTheBall();
 
         var teams = _teamRepository.GetList();

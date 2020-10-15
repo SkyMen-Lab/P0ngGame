@@ -11,6 +11,7 @@ namespace Services
         
         public Text firstTeamLabel, secondTeamLabel, firstTeamScore, secondTeamScore, status, timer,
             teamOnePlayers, teamTwoPlayers;
+        public Button finishGameBtn;
         public static UIService Instance;
         #endregion
 

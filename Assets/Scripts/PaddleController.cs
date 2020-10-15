@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class PaddleController : MonoBehaviour
 {
-    private float movement;
+    private float _movement;
 
     public string TeamCode { get; set; }
     private Rigidbody2D _rigidbody2D;
@@ -23,14 +23,16 @@ public class PaddleController : MonoBehaviour
     
     public void HandleClick(float mov)
     {
-        movement = mov;
+        _movement = mov;
         TransformSmoothly();
     }
 
     private void TransformSmoothly()
     {
-        var y = transform.position.y + movement;
-        var pos = new Vector3(transform.position.x, y);
-        transform.position = Vector3.Lerp(transform.position, pos, 0.5f * Time.deltaTime);
+        var position = transform.position;
+        var y = position.y + _movement;
+        var pos = new Vector3(position.x, y);
+        position = Vector3.Lerp(position, pos, 0.5f * Time.deltaTime);
+        transform.position = position;
     }
 }
